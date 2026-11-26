@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src 'none'; connect-src 'none'; object-src 'none'; base-uri 'none'">
+<title>ECG Crop — 입력과 정답을 함께 옮기기</title>
+<style>
+:root{color-scheme:light;--ink:#17263a;--muted:#57687b;--blue:#215fd1;--orange:#c76a13;--red:#bd3449;--purple:#7650a3;--teal:#177d83;--line:#dce3eb;--wash:#f5f7fa}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#fff;color:var(--ink);font-family:Inter,"Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;font-size:16px;line-height:1.6}main{max-width:1280px;margin:auto;padding:28px 32px 48px}button,input,select{font:inherit}button{border:1px solid #cbd5e1;border-radius:7px;padding:7px 12px;background:#fff;color:var(--ink);min-height:40px;cursor:pointer}button:hover{background:#f1f5fb;border-color:#97a9c3}button:focus-visible,input:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #76a5ff;outline-offset:3px}button:disabled{opacity:.45;cursor:default}button[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}button[aria-pressed="true"]:hover{background:#194eaf}button.mode-shift[aria-pressed="true"]{background:var(--purple);border-color:var(--purple)}input[type="range"]{width:100%;accent-color:var(--blue);min-width:0;margin:0;min-height:30px}input[type="checkbox"]{accent-color:var(--red);width:17px;height:17px;flex-shrink:0}h1,h2,h3,p{margin-top:0}h1{font-size:clamp(25px,3.6vw,36px);letter-spacing:-1.1px;line-height:1.25;margin-bottom:9px}h2{font-size:21px;letter-spacing:-.45px;margin-bottom:12px}h3{font-size:16px;line-height:1.5;margin-bottom:7px}p{margin-bottom:10px}a{color:var(--blue)}[hidden]{display:none!important}.eyebrow{font-size:12px;letter-spacing:1.7px;font-weight:750;color:var(--teal);margin-bottom:8px}.header{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}.intro{color:var(--muted);max-width:850px;margin-bottom:12px}.source-badge{font-size:12px;color:var(--muted);white-space:nowrap;border:1px solid var(--line);padding:5px 9px;border-radius:5px;margin-top:7px}.muted{color:var(--muted)}.small{font-size:13px}.mono{font-variant-numeric:tabular-nums}.scene-row{display:flex;flex-wrap:wrap;gap:7px;margin:9px 0 14px}.scene-row button{font-size:14px;padding:6px 11px}.controls{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px 0}.mode-row{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin-bottom:12px}.mode-buttons{display:flex;gap:6px}.mode-hint{font-size:13px;color:var(--muted);flex:1;min-width:220px}.control-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:18px}.offset-group{display:flex;gap:5px;margin-bottom:6px}.offset-group button{flex:1;white-space:nowrap;font-size:14px;padding:7px 6px}.slider-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.slider-row output{min-width:91px;text-align:right;color:var(--orange);font-size:19px;font-weight:750;font-variant-numeric:tabular-nums}.shift-output{color:var(--purple)!important}.field-label{font-size:13px;font-weight:700;display:block;margin-bottom:5px}.check{display:flex;align-items:center;gap:7px;font-size:14px;min-height:32px}.control-hint{font-size:12px;color:var(--muted);margin:4px 0 0}.event-control{border-left:1px solid var(--line);padding-left:20px}.event-control .slider-row{grid-template-columns:1fr}.event-value{color:var(--red);font-weight:750;font-variant-numeric:tabular-nums}.event-actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.event-actions button{font-size:12px;padding:4px 7px;min-height:32px}.stats{display:grid;grid-template-columns:1fr 1fr 1.1fr;gap:16px;margin:17px 0}.stat{border-left:3px solid #bed0ed;padding:2px 0 2px 12px;min-width:0}.stat.current{border-color:var(--orange)}.stat.result{border-color:#91b8b7}.stat .label{font-size:12px;color:var(--muted)}.stat .range{font-size:14px;font-weight:650;font-variant-numeric:tabular-nums}.stat .value{font-size:21px;line-height:1.6;font-weight:750;font-variant-numeric:tabular-nums}.stat .sub{font-size:12px;color:var(--muted)}.badge{display:inline-block;padding:1px 7px;border-radius:4px;font-size:13px;vertical-align:2px;background:#e9eef4;color:#465a70;margin-left:5px}.badge.positive{background:#fbe8ec;color:#9e253b}.result-value{font-size:18px!important}.question-strip{background:#f1f6ff;padding:10px 13px;border-radius:5px;margin:0 0 16px;font-size:14px}.question-strip strong{color:#214f9e;margin-right:8px}.plot-section{margin-top:18px}.plot-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 18px;flex-wrap:wrap;margin-bottom:3px}.plot-head h2{font-size:16px;margin:0}.step{display:inline-flex;align-items:center;justify-content:center;min-width:23px;height:23px;background:#e8eef6;border-radius:4px;margin-right:7px;font-size:13px;font-weight:700;color:#3d536e}.plot-meta{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}.chart-wrap{position:relative;width:100%;min-width:0}.chart-wrap canvas{display:block;width:100%}.context-chart{height:236px}.edge-chart{height:216px}.input-chart{height:286px}.heat-chart{height:210px}.interactive-chart{cursor:grab;touch-action:pan-y}.plot-caption{font-size:12px;color:var(--muted);margin:3px 0 8px}.legend-inline{display:flex;flex-wrap:wrap;gap:8px 15px;font-size:12px;color:var(--muted);margin:4px 0}.legend-item{display:inline-flex;gap:5px;align-items:center}.swatch{width:17px;height:3px;background:var(--blue);display:inline-block}.swatch.orange{background:var(--orange)}.swatch.red{background:var(--red)}.swatch.purple{background:var(--purple)}.edge-grid,.heat-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}.edge-result{font-size:13px;min-height:24px;color:#465a70}.event-table{margin-top:9px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:9px 10px;text-align:left;border-bottom:1px solid #e4e9ef;vertical-align:top;overflow-wrap:anywhere}thead th{font-size:12px;color:var(--muted);background:#f7f9fc}tbody th{font-weight:650}td.numeric{font-variant-numeric:tabular-nums}.included{color:#a02d41;font-weight:650}.excluded{color:#697889}.candidate-section{margin-top:24px;border-top:1px solid var(--line);padding-top:20px}.candidate-table tr[data-current="true"]{background:#fff5e7}.candidate-table button{font-size:13px;padding:3px 10px;min-height:32px}.candidate-table td{vertical-align:middle}.candidate-table th:first-child{width:16%}.candidate-table th:last-child{width:15%}.candidate-answer{font-weight:700;font-variant-numeric:tabular-nums}.label-note{display:flex;flex-wrap:wrap;gap:7px 16px;background:var(--wash);padding:10px 12px;font-size:13px;margin-top:10px}.input-info{font-size:13px;color:var(--muted);margin:5px 0}.spectrum-actions{display:flex;align-items:center;flex-wrap:wrap;gap:9px 15px;margin-top:12px}.spectrum-actions button{font-size:14px}.spectrum-section{border-top:1px solid var(--line);margin-top:21px;padding-top:18px}.heat-legend{display:flex;gap:6px;align-items:center;color:var(--muted);font-size:11px}.heat-legend .bar{width:105px;height:9px;background:linear-gradient(90deg,#440154,#3b528b,#21918c,#5ec962,#fde725);border-radius:2px}.spectrum-section h3{margin:10px 0 0}.method-table{margin-top:24px;border-top:1px solid var(--line);padding-top:20px}.lesson{border-top:1px solid var(--line);padding-top:22px;margin-top:25px}.question-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.question{background:var(--wash);padding:15px 16px;border-radius:6px}.question .number{color:var(--teal);font-size:12px;font-weight:750;margin-bottom:5px}.question h3{font-size:15px}.question details{font-size:14px}.question summary{color:var(--blue);cursor:pointer;min-height:30px}.question details p{margin-top:9px;color:#3b4b5d}.reference{border-top:1px solid var(--line);padding-top:22px;margin-top:25px}.reference table{table-layout:fixed}.reference th:first-child{width:20%}.reference th:nth-child(2){width:30%}.formula{font-family:"Cambria Math","Times New Roman",serif;font-size:17px}.now{font-size:12px;color:var(--blue);display:block;margin-top:4px}.settings-note{margin-top:18px;font-size:13px;color:var(--muted)}.settings-note summary{cursor:pointer;color:var(--ink);font-weight:650;padding:6px 0}.settings-note p{margin:8px 0}.settings-note ul{padding-left:22px}.foot{font-size:12px;color:var(--muted);border-top:1px solid var(--line);margin-top:22px;padding-top:12px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.error{padding:12px;background:#fff0ed;color:#9f281b}noscript{display:block;padding:20px;background:#fff0db;color:#6b3f00}
+@media(max-width:980px){main{padding:22px}.source-badge{display:none}.control-grid{grid-template-columns:1fr 1fr}.question-grid{grid-template-columns:1fr}.question{padding:12px 15px}.edge-grid,.heat-grid{gap:16px}.stat .value{font-size:19px}.stat .range{font-size:13px}}
+@media(max-width:640px){main{padding:18px 14px 35px}h1{letter-spacing:-.7px}.intro{font-size:14px}.control-grid{grid-template-columns:1fr;gap:14px}.event-control{border-left:0;border-top:1px solid var(--line);padding-left:0;padding-top:12px}.event-actions button{min-height:36px}.scene-row button{font-size:13px;flex-grow:1}.mode-buttons{width:100%}.mode-buttons button{flex:1}.mode-hint{font-size:12px}.stats{grid-template-columns:1fr 1fr;gap:12px}.stat.result{grid-column:1/-1}.stat .value{font-size:20px}.question-strip{font-size:13px}.question-strip strong{display:block;margin-bottom:2px}.edge-grid,.heat-grid{grid-template-columns:1fr;gap:12px}.context-chart{height:232px}.edge-chart{height:214px}.input-chart{height:280px}.plot-meta{font-size:11px}.plot-section{margin-top:15px}table{font-size:13px}th,td{padding:8px 6px}.candidate-table button{padding:4px 8px}.candidate-table th:first-child{width:19%}.candidate-table th:last-child{width:17%}.reference table{table-layout:auto}.reference th:first-child{width:22%}.reference th:nth-child(2){width:30%}.formula{font-size:15px}.legend-inline{font-size:11px}.heat-legend .bar{width:75px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{main{max-width:none;padding:0}.controls,.scene-row,.spectrum-actions,button{display:none}.question-grid{grid-template-columns:1fr}.plot-section,.edge-grid{break-inside:avoid}.question details>*:not(summary){display:block}}
+</style>
+<style id="layout-v2-style">
+/* Keep the live result next to its controls. Supplemental material is collapsible. */
+main{max-width:1440px;padding:20px 24px 40px}
+h1{font-size:clamp(24px,3vw,31px);margin-bottom:6px}
+.eyebrow{margin-bottom:5px;font-size:11px}
+.intro{font-size:14px;margin-bottom:7px;max-width:none}
+.source-badge{font-size:11px}
+.scene-row{margin:8px 0 14px;gap:6px}
+.scene-row button{font-size:13px;min-height:36px;padding:5px 10px}
+.workbench{display:grid;grid-template-columns:310px minmax(0,1fr);gap:24px;align-items:start}
+.controls-column{position:sticky;top:14px;align-self:start;min-width:0}
+.result-column{min-width:0}
+.workbench .controls{padding:12px 0;border-top:2px solid #d9e3f1}
+.workbench .control-grid{display:block}
+.workbench .mode-row{gap:7px;margin-bottom:11px}
+.workbench .mode-buttons{width:100%}
+.workbench .mode-buttons button{flex:1;padding:6px 8px;font-size:14px}
+.workbench .mode-hint{font-size:12px;line-height:1.5;min-width:0;flex-basis:100%}
+.workbench .offset-group{gap:3px}
+.workbench .offset-group button{font-size:12px;padding:5px 2px;min-height:34px}
+.workbench .control-hint{font-size:11px;line-height:1.5;margin:3px 0 7px}
+.workbench .field-label{font-size:12px}
+.workbench .slider-row{gap:8px}
+.workbench .slider-row output{min-width:72px;font-size:17px}
+.workbench .check{font-size:13px}
+.workbench .event-control{border:0;padding:6px 0 0}
+.workbench .event-actions button{font-size:11px;min-height:31px;padding:4px 6px}
+.aux-options{border-top:1px solid var(--line);margin-top:10px;padding-top:5px}
+.aux-options summary{cursor:pointer;font-size:13px;font-weight:650;min-height:34px;padding:4px 0;color:#354b65}
+.sidebar-footer{display:flex;justify-content:flex-end;margin-top:7px}
+.sidebar-footer button{font-size:12px;min-height:30px;padding:3px 10px}
+.live-summary{padding:8px 11px 7px;background:#f2f6fc;border-radius:5px;margin:0 0 9px}
+.live-strip{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;font-size:14px;font-variant-numeric:tabular-nums;line-height:1.45}
+#live-transform{color:var(--orange)}
+.workbench[data-mode="shift"] #live-transform{color:var(--purple)}
+#live-label{color:#243f65}
+#live-seam{font-size:12px;color:var(--purple)}
+.live-route{font-size:12px;line-height:1.5;color:#52647a;margin:4px 0 0;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.workbench .primary-stage .plot-section{margin-top:0}
+.workbench .plot-head{gap:3px 12px}
+.workbench .plot-head h2{font-size:15px}
+.workbench .plot-meta{font-size:11px}
+.primary-stage .context-chart{height:208px}
+.primary-stage .input-chart{height:232px}
+.primary-stage .legend-inline{font-size:11px;gap:5px 11px;margin:2px 0}
+.primary-stage .plot-caption{font-size:11px;line-height:1.4;margin:2px 0 5px}
+.edge-section{margin-top:10px}
+.edge-section .edge-grid{gap:16px}
+.edge-section h3{font-size:13px;margin:4px 0 0}
+.edge-section .edge-chart{height:184px}
+.edge-section .edge-result{font-size:11px;line-height:1.4;margin:1px 0 0;min-height:16px}
+.spectrum-actions{margin:12px 0 8px;gap:7px 10px}
+.spectrum-actions button{font-size:12px;min-height:33px;padding:5px 10px}
+.spectrum-actions .small{font-size:11px}
+.aux-details{border-top:1px solid var(--line);margin-top:6px;padding:0}
+.aux-details>summary{cursor:pointer;color:#354b65;font-size:13px;font-weight:650;padding:9px 2px;min-height:38px}
+.aux-details[open]>summary{margin-bottom:5px}
+.aux-details .candidate-section,.aux-details .method-table,.aux-details .lesson,.aux-details .reference{border-top:0;margin-top:0;padding-top:6px}
+.aux-details .question-grid{grid-template-columns:1fr}
+.aux-details .question{padding:12px 14px}
+.aux-details .plot-section{margin-top:6px}
+.aux-details .stats{margin:9px 0 13px}
+.quick-controls{display:none;position:sticky;top:0;z-index:8;background:#fff;padding:7px 10px 4px;border:1px solid #d8e2f0;border-radius:5px;margin-bottom:9px;box-shadow:0 2px 5px #162b4510}
+.quick-head{display:flex;justify-content:space-between;gap:10px;font-size:12px;font-weight:700;line-height:1.4}
+.quick-head output{font-variant-numeric:tabular-nums;color:var(--blue)}
+.quick-controls input[type="range"]{min-height:27px}
+.foot{margin-top:23px}
+@media(min-width:981px) and (max-width:1100px){.workbench{grid-template-columns:285px minmax(0,1fr);gap:18px}.workbench .mode-buttons button{font-size:13px}.workbench .offset-group button{font-size:11px}}
+@media(max-width:980px){.workbench{grid-template-columns:1fr;gap:12px}.controls-column{position:static}.workbench .control-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 22px}.workbench .aux-options{border-top:0;margin-top:0;padding-top:0}.workbench .mode-row{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:12px}.workbench .mode-buttons{min-width:260px}.workbench .mode-hint{font-size:12px}.sidebar-footer{margin-top:0}.quick-controls{display:block}.source-badge{display:none}.primary-stage .input-chart{height:240px}.edge-section .edge-chart{height:195px}}
+@media(max-width:640px){main{padding:15px 14px 32px}.intro{font-size:13px}.workbench{gap:8px}.workbench .controls{padding:8px 0}.workbench .mode-row{display:flex;margin-bottom:7px}.workbench .mode-buttons{min-width:0}.workbench .mode-hint{display:none}.workbench .control-grid{display:block}.workbench .offset-group{display:none}.workbench .control-hint{display:none}.workbench .field-label{margin-bottom:2px}.workbench .check{min-height:29px;font-size:12px;margin-top:2px}.workbench .aux-options{border-top:1px solid var(--line);margin-top:6px}.aux-options summary{min-height:30px;padding:3px 0;font-size:12px}.sidebar-footer{margin-top:3px}.sidebar-footer button{min-height:27px}.scene-row button{font-size:12px;padding:5px 7px;min-height:34px}.live-strip{font-size:13px;gap:3px 10px}.live-route{font-size:11px}.primary-stage .context-chart{height:208px}.primary-stage .input-chart{height:244px}.edge-section .edge-chart{height:195px}.edge-section .edge-grid{gap:9px}.edge-section .edge-result{font-size:11px}.aux-details>summary{font-size:12px}.spectrum-actions .small{display:none}.workbench .event-control .control-hint{display:block}.workbench .event-actions button{min-height:33px}}
+@media(min-width:981px) and (max-height:620px){.controls-column{position:static}.quick-controls{display:block}}
+@media print{.workbench{display:block}.controls-column,.quick-controls{display:none}.aux-details>summary{font-weight:700}.aux-details>*{display:block!important}.aux-details{break-inside:auto}.primary-stage .input-chart{height:286px}.primary-stage .context-chart{height:236px}.edge-section .edge-chart{height:216px}}
+</style></head>
+<body>
+<main>
+  <header class="header"><div><div class="eyebrow">BIO SIGNAL LAB / INTERACTIVE 02</div><h1>Crop, 입력과 정답을 함께 옮기기</h1><p class="intro">30초 창의 V 포함 여부로 정답을 계산합니다. 모드에 맞는 결과를 조작부 옆에서 확인하세요.</p></div><span class="source-badge">설명용 합성 ECG · 오프라인 실행</span></header>
+  <div class="scene-row" aria-label="수업 시나리오"><button type="button" id="scene-enter">① V가 들어오는 crop</button><button type="button" id="scene-exit">② 마지막 V가 빠지는 crop</button><button type="button" id="scene-boundary">③ 끝 경계에 놓인 V</button><button type="button" id="scene-roll">④ 끝에서 앞으로 돌아오는 V</button></div>
+  <section id="workbench" class="workbench" aria-label="조작과 결과 비교" data-mode="crop"><aside id="controls-column" class="controls-column" aria-label="시연 조작"><section class="controls" aria-label="증강과 V 주석 설정">
+    <div class="mode-row"><div class="mode-buttons" role="group" aria-label="증강 방법"><button type="button" id="mode-crop" aria-pressed="true">시간 crop</button><button type="button" id="mode-shift" class="mode-shift" aria-pressed="false">원형 shift</button></div><span id="mode-hint" class="mode-hint"></span></div>
+    <div class="control-grid"><div>
+      <div id="crop-controls"><span class="field-label" id="crop-label">원래 시작점에서 얼마나 옮길까요?</span><div class="offset-group" role="group" aria-labelledby="crop-label"><button type="button" id="offset-m1" data-offset="-128" aria-pressed="false">−1초</button><button type="button" id="offset-m05" data-offset="-64" aria-pressed="true">−0.5초</button><button type="button" id="offset-zero" data-offset="0" aria-pressed="false">0초</button><button type="button" id="offset-p05" data-offset="64" aria-pressed="false">+0.5초</button><button type="button" id="offset-p1" data-offset="128" aria-pressed="false">+1초</button></div><div class="slider-row"><input id="crop-position" type="range" min="0" max="4" step="1" value="1" aria-label="다섯 crop 후보 중 선택"><output id="crop-value" for="crop-position">−0.5초</output></div><p class="control-hint">음수: 더 이른 구간 · 양수: 더 늦은 구간. 모두 30초를 잘라냅니다.</p></div>
+      <div id="shift-controls" hidden><span class="field-label">원래 30초 입력 안에서 원형으로 이동</span><div class="offset-group" role="group" aria-label="원형 이동량"><button type="button" id="shift-left">← −0.5초</button><button type="button" id="shift-zero">0초</button><button type="button" id="shift-right">+0.5초 →</button></div><div class="slider-row"><input id="shift-position" type="range" min="-64" max="64" step="1" value="64" aria-label="원형 이동량, 샘플 단위"><output id="shift-value" for="shift-position" class="shift-output">+0.5초</output></div><p class="control-hint">양수는 오른쪽 이동. 밀려난 끝부분이 앞쪽으로 돌아옵니다.</p></div>
+      <label class="check"><input id="extra-v" type="checkbox"><span>16초에 V를 하나 더 두기</span></label><p class="control-hint">V 하나가 빠져도 다른 V가 남아 있다면 라벨은 어떻게 될까요?</p>
+    </div><details id="v-options" class="aux-options"><summary>V의 위치 · 경계 설정</summary><div class="event-control"><label class="field-label" for="v-position">관찰할 V1의 주석 시각 <span id="v-value" class="event-value"></span></label><div class="slider-row"><input id="v-position" type="range" min="0" max="4095" step="1" value="64" aria-label="V1 주석의 시각, 128 Hz 샘플 단위"></div><p class="control-hint" id="v-sample"></p><div class="event-actions" role="group" aria-label="원래 창의 경계에 V 주석 놓기"><button type="button" id="v-at-start">원래 시작에</button><button type="button" id="v-before-end">끝 1샘플 전</button><button type="button" id="v-at-end">원래 끝에</button><button type="button" id="v-after-end">끝 1샘플 뒤</button></div><p class="control-hint">주석과 파형을 함께 옮기는 합성 예제입니다. 시작은 포함하고 끝은 제외합니다.</p></div></details></div>
+  <div class="sidebar-footer"><button type="button" id="reset">초기화</button></div></section>
+  </aside><div id="result-column" class="result-column"><div id="quick-controls" class="quick-controls" aria-label="그림 옆 이동량 조절">
+<div class="quick-head"><span id="quick-label">Crop 이동량</span><output id="quick-value">−0.5초</output></div>
+<input id="quick-crop-position" type="range" min="0" max="4" step="1" value="1" aria-label="그림 옆 crop 이동량">
+<input id="quick-shift-position" type="range" min="-64" max="64" step="1" value="64" aria-label="그림 옆 원형 이동량" hidden>
+</div><div class="live-summary" aria-label="현재 이동과 정답 요약">
+<div class="live-strip"><strong id="live-transform">Crop −0.5초</strong><span id="live-count"></span><strong id="live-label"></strong><span id="live-seam"></span></div>
+<p id="live-route" class="live-route"></p>
+</div><div id="primary-stage" class="primary-stage"><section class="plot-section" id="context-section"><div class="plot-head"><h2 id="context-heading">긴 기록에서 30초 창 선택</h2><span class="plot-meta">합성 문맥 32초 · 128 Hz · 진폭 a.u.</span></div><div class="chart-wrap"><canvas id="context-chart" class="context-chart interactive-chart" role="img" aria-label="32초 합성 ECG와 원래 및 현재의 30초 창. V1 표식을 드래그하면 주석 시각을 바꿀 수 있습니다.">기록 시각 0–32초의 ECG와 선택 창</canvas></div><div class="legend-inline"><span class="legend-item"><i class="swatch"></i>원래 창</span><span class="legend-item"><i id="current-swatch" class="swatch orange"></i><span id="current-legend">새 crop</span></span><span class="legend-item"><i class="swatch red"></i>V 주석</span><span>● 시작 포함 / ○ 끝 제외</span></div><p class="plot-caption" id="context-caption"></p></section>
+  </div><section class="plot-section edge-section" id="edge-section"><div class="plot-head"><h2 id="edge-heading">창의 경계 확대</h2><span id="edge-axis-note" class="plot-meta"></span></div><div class="edge-grid"><div><h3 id="left-title">왼쪽 경계</h3><div class="chart-wrap"><canvas id="left-edge" class="edge-chart" role="img" aria-label="왼쪽 경계의 확대 파형과 V 주석">왼쪽 경계 확대</canvas></div><p id="left-reading" class="edge-result"></p></div><div><h3 id="right-title">오른쪽 경계</h3><div class="chart-wrap"><canvas id="right-edge" class="edge-chart" role="img" aria-label="오른쪽 경계의 확대 파형과 V 주석">오른쪽 경계 확대</canvas></div><p id="right-reading" class="edge-result"></p></div></div>
+    </section>
+  <div class="spectrum-actions"><button type="button" id="spectrum-toggle" aria-expanded="false" aria-controls="spectrum-section">STFT도 함께 비교</button><span class="small muted">각 파형의 시간·주파수 표현까지 확인할 수 있습니다.</span></div><section id="spectrum-section" class="spectrum-section" hidden><div class="plot-head"><h2>선택한 파형의 STFT</h2><div class="heat-legend"><span>−2.5</span><span class="bar" aria-hidden="true"></span><span>+3.5 z-score</span></div></div><p id="spectrum-note" class="small muted"></p><div class="heat-grid"><div><h3>원래 입력</h3><div class="chart-wrap"><canvas id="spectrum-original" class="heat-chart" role="img" aria-label="원래 30초 입력의 표준화 log-power STFT">원래 STFT</canvas></div></div><div><h3 id="spectrum-current-title">새 crop</h3><div class="chart-wrap"><canvas id="spectrum-current" class="heat-chart" role="img" aria-label="증강된 30초 입력의 표준화 log-power STFT">증강 입력의 STFT</canvas></div></div></div><p class="plot-caption">2초 Hann 창 · 0.5초 hop · 반사 padding · 0.5–40 Hz · 80 × 61. 색은 각 평면에서 표준화한 log-power이므로 서로 다른 입력의 절대 파워를 색만으로 비교하지 않습니다.</p></section>
+  <details id="secondary-details" class="aux-details"><summary id="secondary-details-summary">다른 보기 · 원래 입력과 새 crop의 전체 파형</summary><div id="secondary-stage"><section class="plot-section" id="input-section"><div class="plot-head"><h2 id="input-heading">원래 입력과 새 crop 비교</h2><span class="plot-meta">가로축: 각 입력 안의 상대시각 · 세로축: z-score</span></div><div class="chart-wrap"><canvas id="input-chart" class="input-chart" role="img" aria-label="원래 30초 입력과 증강한 30초 입력의 표준화 파형 비교">원래 및 증강 입력 비교</canvas></div></section>
+  </div></details><details id="label-details" class="aux-details"><summary id="label-details-summary">라벨 · V 주석 위치 · 입력 처리 자세히</summary><section class="stats" aria-label="원래 라벨과 새 라벨 비교">
+    <div class="stat"><div class="label">원래 30초 창</div><div id="original-range" class="range"></div><div class="value"><span id="original-y"></span><span id="original-badge" class="badge"></span></div><div id="original-count" class="sub"></div></div>
+    <div class="stat current" id="current-stat"><div id="current-title" class="label">새 crop</div><div id="current-range" class="range"></div><div class="value"><span id="current-y"></span><span id="current-badge" class="badge"></span></div><div id="current-count" class="sub"></div></div>
+    <div class="stat result"><div class="label">원래 정답을 그대로 써도 될까요?</div><div id="label-result" class="value result-value"></div><div id="label-reason" class="sub"></div></div>
+  </section>
+  <div class="table-wrap event-table"><table><thead><tr><th scope="col">V 주석</th><th scope="col">기록 시각</th><th scope="col">원래 창</th><th scope="col">새 입력</th><th scope="col">새 입력 안의 위치</th></tr></thead><tbody><tr id="event-row-1"><th scope="row">V1</th><td id="event-time-1" class="numeric"></td><td id="event-old-1"></td><td id="event-new-1"></td><td id="event-local-1" class="numeric"></td></tr><tr id="event-row-2" hidden><th scope="row">V2</th><td id="event-time-2" class="numeric"></td><td id="event-old-2"></td><td id="event-new-2"></td><td id="event-local-2" class="numeric"></td></tr></tbody></table></div><p class="plot-caption">라벨은 파형의 일부가 보이는지가 아니라 <strong>V 주석 시각이 포함되는지</strong>로 정합니다. 주석은 설명과 정답 생성에 사용하며 모델 입력 채널로 넣지 않습니다.</p>
+  <p class="input-info" id="input-description"></p></details><details id="candidate-details" class="aux-details"><summary id="candidate-details-summary">다섯 crop 후보의 정답표</summary><section id="candidate-section" class="candidate-section"><h2>같은 원래 창에서 만든 다섯 후보</h2><p class="small muted">노트북은 훈련 시 다섯 후보 중 하나를 고릅니다. 각 후보의 입력과 그 후보에서 다시 계산한 정답을 함께 사용합니다.</p><div class="table-wrap"><table class="candidate-table"><thead><tr><th scope="col">이동량</th><th scope="col">새 기록 구간 [시작, 끝)</th><th scope="col">V 개수 / 정답</th><th scope="col">화면 선택</th></tr></thead><tbody>
+    <tr id="candidate-row-0"><th scope="row">−1초</th><td id="candidate-range-0" class="numeric"></td><td id="candidate-answer-0" class="candidate-answer"></td><td><button type="button" id="candidate-0" data-candidate="0" aria-pressed="false">선택</button></td></tr>
+    <tr id="candidate-row-1"><th scope="row">−0.5초</th><td id="candidate-range-1" class="numeric"></td><td id="candidate-answer-1" class="candidate-answer"></td><td><button type="button" id="candidate-1" data-candidate="1" aria-pressed="true">선택</button></td></tr>
+    <tr id="candidate-row-2"><th scope="row">0초</th><td id="candidate-range-2" class="numeric"></td><td id="candidate-answer-2" class="candidate-answer"></td><td><button type="button" id="candidate-2" data-candidate="2" aria-pressed="false">선택</button></td></tr>
+    <tr id="candidate-row-3"><th scope="row">+0.5초</th><td id="candidate-range-3" class="numeric"></td><td id="candidate-answer-3" class="candidate-answer"></td><td><button type="button" id="candidate-3" data-candidate="3" aria-pressed="false">선택</button></td></tr>
+    <tr id="candidate-row-4"><th scope="row">+1초</th><td id="candidate-range-4" class="numeric"></td><td id="candidate-answer-4" class="candidate-answer"></td><td><button type="button" id="candidate-4" data-candidate="4" aria-pressed="false">선택</button></td></tr>
+  </tbody></table></div><div class="label-note"><span>입력 길이: 모든 후보 <strong>30초 = 3,840샘플</strong></span><span id="candidate-summary"></span></div></section>
+  </details><details id="method-details" class="aux-details"><summary id="method-details-summary">Crop과 원형 shift의 차이</summary><section class="method-table"><h2>Crop과 circular shift의 차이</h2><table><thead><tr><th scope="col">확인할 것</th><th scope="col">시간 crop</th><th scope="col">원형 shift</th></tr></thead><tbody><tr><th scope="row">신호를 가져오는 곳</th><td>주변 문맥에서 시작점이 다른 30초를 다시 선택</td><td>원래 30초 안의 값들을 원형으로 재배열</td></tr><tr><th scope="row">원래 창 밖의 V</th><td>새 창 안으로 들어올 수 있음</td><td>새로 들어오지 않음</td></tr><tr><th scope="row">이 과제의 라벨</th><td>새 구간의 V 주석으로 다시 계산</td><td>V 포함 여부가 보존되므로 원래 라벨 유지</td></tr><tr><th scope="row">접합부</th><td>원래 기록에서 이어진 구간을 사용</td><td>원래 끝과 시작이 맞닿는 인위적인 경계가 생김</td></tr></tbody></table></section>
+  </details><details id="lesson-details" class="aux-details"><summary id="lesson-details-summary">수업 질문과 설명</summary><div class="question-strip"><strong id="question-lead">관찰 포인트</strong><span id="question-text"></span></div>
+  <section class="lesson"><h2>수업에서 함께 생각해 보기</h2><div class="question-grid"><div class="question"><div class="number">질문 01 · 라벨 갱신</div><h3>같은 기록을 0.5초 옮겼을 뿐인데, 원래 정답을 그대로 써도 될까요?</h3><details><summary>설명 보기</summary><p>새 창에 V가 들어오거나 마지막 V가 빠지면 정답이 바뀝니다. Crop은 새 입력과 새 주석 범위를 함께 확인해야 합니다. 원래 y=0을 유지한 채 V가 들어온 crop을 학습시키면 입력과 정답이 맞지 않습니다.</p></details></div><div class="question"><div class="number">질문 02 · 경계 규칙</div><h3>V가 창의 끝에 정확히 있거나 파형의 일부만 보이면 양성일까요?</h3><details><summary>설명 보기</summary><p>이 실습의 구간은 [시작, 끝)입니다. V 주석이 시작점과 같으면 포함하고, 끝점과 같으면 제외합니다. 파형의 꼬리가 일부 보이더라도 주석 시각이 창 밖이면 그 V는 라벨 계산에 포함하지 않습니다.</p></details></div><div class="question"><div class="number">질문 03 · 개수와 존재</div><h3>두 V 중 하나가 빠지면 y=0이 될까요?</h3><details><summary>설명 보기</summary><p>하나라도 남으면 y=1입니다. 「16초에 V를 하나 더 두기」를 켜고 crop을 바꿔 보세요. V 개수는 변해도 이 과제의 이진 정답은 그대로일 수 있습니다. V 없음은 모든 부정맥이 없다는 뜻은 아닙니다.</p></details></div></div></section>
+  </details><details id="reference-details" class="aux-details"><summary id="reference-details-summary">참고 · 정의와 공식</summary><section class="reference"><h2>참고: 정의와 현재 계산</h2><table><thead><tr><th scope="col">개념</th><th scope="col">정의·계산</th><th scope="col">읽는 방법</th></tr></thead><tbody>
+    <tr><th scope="row">V 포함 라벨</th><td class="formula">y = 1{n<sub>V</sub> ≥ 1}<span id="ref-label" class="now"></span></td><td>30초 안에 V 주석이 하나라도 있으면 1, 없으면 0입니다. 양성은 V 포함, 음성은 V 없음입니다.</td></tr>
+    <tr><th scope="row">구간의 경계</th><td class="formula">start ≤ v &lt; end<span id="ref-range" class="now"></span></td><td>v는 V 주석의 시각입니다. 왼쪽 경계는 포함하고 오른쪽 경계는 제외합니다. 실제 계산은 정수 샘플 인덱스로 수행합니다.</td></tr>
+    <tr><th scope="row">시간 crop</th><td class="formula">s′ = clip(s + δ, 0, L−N)<br>x′ = x[s′ : s′+N]</td><td>주변 문맥에서 시작점을 바꾼 30초 구간을 고릅니다. 기록 밖으로 나가지 않도록 시작점을 제한하고, 그 구간의 주석으로 y′를 다시 구합니다.</td></tr>
+    <tr><th scope="row">원형 shift</th><td class="formula">x′[j] = x[(j−k) mod N]<br>v′ = (v+k) mod N<span id="ref-roll" class="now"></span></td><td>k가 양수이면 오른쪽으로 이동합니다. 여기의 v는 원래 창에 포함된 V의 상대 샘플 인덱스입니다. 원래 창 밖의 V는 새로 넣지 않습니다.</td></tr>
+    <tr><th scope="row">원형 접합부</th><td class="formula">(k mod N) / f<sub>s</sub><span id="ref-seam" class="now"></span></td><td>원래 끝과 시작이 새 입력 안에서 맞닿는 위치입니다. 이동량 0일 때는 내부 접합부를 표시하지 않습니다. 이 시연의 mod는 0 이상 N 미만을 돌려줍니다.</td></tr>
+    <tr><th scope="row">구간별 표준화</th><td class="formula">z = (x−μ) / max(σ, 10<sup>−4</sup>)</td><td>각 30초 구간 자체의 평균과 모집단 표준편차를 사용하고 ±20으로 제한합니다. Crop은 새 구간마다 계산합니다. 1D shift는 원래 표준화된 파형을 원형 이동합니다.</td></tr>
+    <tr><th scope="row">이 시연의 표본 단위</th><td class="formula">f<sub>s</sub> = 128 Hz<br>N = 30 × 128 = 3,840<span class="now">1샘플 = 7.8125 ms</span></td><td>원래 기록 구간은 [1초, 31초)입니다. Crop은 −128, −64, 0, +64, +128샘플, shift는 −64~+64샘플을 사용합니다.</td></tr>
+  </tbody></table>
+  <details class="settings-note"><summary>합성 신호와 노트북 연결</summary><p>이 HTML은 <strong>03_ecg_cnn_augmentation_teaching(1).ipynb</strong>의 crop·라벨 처리와 1D circular shift를 설명하는 시연입니다. 파형과 V 주석은 원리를 보여주기 위해 생성했으며 실제 환자 자료가 아닙니다. 파형 모양만으로 V를 자동 판별하는 도구도 아닙니다.</p><ul><li>원래 창은 [1,31)초, 문맥은 [0,32)초입니다. 다섯 crop 후보의 길이는 모두 30초이며 원래 위치도 후보에 포함됩니다. 입력과 새 구간의 정답을 같은 후보 인덱스로 선택합니다.</li><li>V1을 옮기면 합성 파형도 함께 바뀝니다. 추가 V2는 16초에 놓이며 두 주석이 같은 샘플에 겹치면 하나의 사건으로 셉니다.</li><li>표시된 V 주석은 정답 생성과 설명에 사용합니다. 모델 입력에는 파형이나 STFT만 들어갑니다. 화면의 y는 정답이며 모델의 예측값이 아닙니다.</li><li>STFT는 표준화된 30초 파형에 주기형 Hann 256, FFT 256, hop 64, 양끝 128개 반사 padding을 적용합니다. 1–80번 주파수 bin을 선택하여 80 × 61을 만들고, log<sub>10</sub>(|FFT|² + 10<sup>−10</sup>) 평면의 평균과 표본 표준편차로 다시 표준화합니다.</li><li>원형 shift 모드의 STFT는 <strong>이동한 1D 파형을 다시 변환한 설명용 그림</strong>입니다. 노트북의 2D shift는 원래 STFT 평면 자체를 시간축으로 ±1열 원형 이동하므로 두 결과를 동일하게 해석하지 않습니다.</li><li>STFT의 마지막 열 중심은 반사 padding을 이용한 30초입니다. 이는 입력의 오른쪽 끝에 새 V 주석을 추가하거나 [시작, 끝) 라벨 규칙을 바꾸는 처리가 아닙니다.</li><li>앞선 STFT 시연의 고정 기준 dB와 달리, 여기의 스펙트로그램 색은 노트북처럼 각 평면에서 표준화한 log-power입니다. 라벨이 유지되어도 모델의 예측이 같거나 증강의 성능 향상이 보장되는 것은 아닙니다.</li></ul></details></section>
+  </details></div></section><footer class="foot">수업 자료 연결: lecture_slides.pdf 42–43쪽 · 03_ecg_cnn_augmentation_teaching(1).ipynb 「시간 crop」·「Crop은 정답도 함께 확인」·circular_shift().<br>단일 HTML · 외부 라이브러리·네트워크 요청 없음 · 모든 설정은 키보드로도 조절할 수 있습니다.</footer>
+  <div id="status" class="sr-only" aria-live="polite"></div><div id="error" role="alert" class="error" hidden></div><noscript>이 시연은 JavaScript가 필요합니다. 파일을 내려받아 Chrome, Edge, Firefox 등의 브라우저에서 열어 주세요.</noscript>
+</main>
+<script id="crop-math">
+'use strict';
+window.CropMath=(()=>{
+  const FS=128,RECORD_SECONDS=32,RECORD_N=4096,WINDOW_SECONDS=30,N=3840,BASE=128,OFFSETS=[-128,-64,0,64,128],TAU=2*Math.PI;
+  const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),mod=(x,n)=>((x%n)+n)%n;
+  function events(mainSample,extra=false){const out=[{id:'V1',sample:clamp(Math.round(mainSample),0,RECORD_N-1)}];if(extra&&out[0].sample!==16*FS)out.push({id:'V2',sample:16*FS});return out;}
+  const inside=(sample,start,n=N)=>sample>=start&&sample<start+n;
+  function inWindow(vs,start,n=N){return vs.filter(v=>inside(v.sample,start,n)).map(v=>({...v,local:v.sample-start}));}
+  function cropStart(start,offset,length=RECORD_N,n=N){return clamp(start+offset,0,length-n);}
+  function roll(x,k){const out=new Float64Array(x.length);for(let j=0;j<x.length;j++)out[j]=x[mod(j-k,x.length)];return out;}
+  function rollEvents(vs,k,n=N){return vs.map(v=>({...v,local:mod(v.local+k,n)}));}
+  function standardize(x){let sum=0;for(const v of x)sum+=v;const mean=sum/x.length;let ss=0;for(const v of x)ss+=(v-mean)**2;const sd=Math.max(Math.sqrt(ss/x.length),1e-4);return Float64Array.from(x,v=>clamp((v-mean)/sd,-20,20));}
+  function makeSignal(vs){
+    const x=new Float64Array(RECORD_N),beats=[];
+    for(let t=.35;t<RECORD_SECONDS+.4;t+=.8)if(!vs.some(v=>Math.abs(t-v.sample/FS)<.28))beats.push(t);
+    for(let i=0;i<x.length;i++){const t=i/FS;let value=.025*Math.sin(TAU*.27*t)+.008*Math.sin(TAU*19*t);
+      for(const beat of beats){const d=t-beat;if(Math.abs(d)<.48)value+=.10*Math.exp(-.5*((d+.17)/.035)**2)-.12*Math.exp(-.5*((d+.022)/.009)**2)+1.0*Math.exp(-.5*(d/.013)**2)-.23*Math.exp(-.5*((d-.028)/.012)**2)+.25*Math.exp(-.5*((d-.22)/.06)**2);}
+      for(const v of vs){const d=t-v.sample/FS;if(Math.abs(d)<.55)value+=1.0*Math.exp(-.5*(d/.04)**2)-.52*Math.exp(-.5*((d-.095)/.047)**2)-.19*Math.exp(-.5*((d-.27)/.075)**2);}
+      x[i]=value;
+    }return x;
+  }
+  function buildData(state,signalOverride=null){
+    const vs=events(state.vSample,state.extra),signal=signalOverride||makeSignal(vs),start=BASE,originalRaw=signal.slice(start,start+N),originalInput=standardize(originalRaw),originalEvents=inWindow(vs,start);
+    const original={start,end:start+N,raw:originalRaw,input:originalInput,events:originalEvents,count:originalEvents.length,label:Number(originalEvents.length>0)};
+    const candidates=OFFSETS.map(offset=>{const s=cropStart(start,offset,signal.length),included=inWindow(vs,s);return {offset,start:s,end:s+N,actualOffset:s-start,count:included.length,label:Number(included.length>0),events:included};});
+    let current;
+    if(state.mode==='crop'){const s=cropStart(start,state.cropOffset,signal.length),raw=signal.slice(s,s+N),ev=inWindow(vs,s);current={start:s,end:s+N,raw,input:standardize(raw),events:ev,count:ev.length,label:Number(ev.length>0),actualOffset:s-start,seam:null};}
+    else{const k=clamp(Math.round(state.shift),-64,64);current={start,end:start+N,raw:roll(originalRaw,k),input:roll(originalInput,k),events:rollEvents(originalEvents,k),count:originalEvents.length,label:original.label,actualOffset:0,seam:k===0?null:mod(k,N),shift:k};}
+    return {signal,events:vs,original,current,candidates};
+  }
+  function fft(re,im){const n=re.length;for(let i=1,j=0;i<n;i++){let bit=n>>1;for(;j&bit;bit>>=1)j^=bit;j^=bit;if(i<j){[re[i],re[j]]=[re[j],re[i]];[im[i],im[j]]=[im[j],im[i]];}}for(let len=2;len<=n;len<<=1){const a=-TAU/len,ar=Math.cos(a),ai=Math.sin(a);for(let i=0;i<n;i+=len){let wr=1,wi=0;for(let j=0;j<len/2;j++){const p=i+j,q=p+len/2,vr=re[q]*wr-im[q]*wi,vi=re[q]*wi+im[q]*wr;re[q]=re[p]-vr;im[q]=im[p]-vi;re[p]+=vr;im[p]+=vi;const old=wr;wr=old*ar-wi*ai;wi=old*ai+wi*ar;}}}}
+  function reflectIndex(i,n){if(i<0)return -i;if(i>=n)return 2*n-2-i;return i;}
+  function spectrogram(input){
+    if(input.length!==N)throw new Error('STFT 입력은 30초여야 합니다.');
+    const nfft=256,hop=64,frames=61,bins=80,values=new Float64Array(frames*bins),weights=Float64Array.from({length:nfft},(_,i)=>.5-.5*Math.cos(TAU*i/nfft));
+    let sum=0;
+    for(let m=0;m<frames;m++){const re=new Float64Array(nfft),im=new Float64Array(nfft);for(let n=0;n<nfft;n++)re[n]=input[reflectIndex(m*hop+n-128,input.length)]*weights[n];fft(re,im);for(let k=1;k<=80;k++){const v=Math.log10(re[k]*re[k]+im[k]*im[k]+1e-10);values[m*bins+k-1]=v;sum+=v;}}
+    const mean=sum/values.length;let ss=0;for(const v of values)ss+=(v-mean)**2;const sd=Math.max(Math.sqrt(ss/(values.length-1)),1e-4);const normalized=Float64Array.from(values,v=>(v-mean)/sd);return {frames,bins,hopSeconds:.5,df:.5,values,normalized,mean,sd};
+  }
+  const colors=[[0,68,1,84],[.25,59,82,139],[.5,33,145,140],[.75,94,201,98],[1,253,231,37]];
+  function color(z){const u=clamp((z+2.5)/6,0,1);let i=0;while(i<colors.length-2&&u>colors[i+1][0])i++;const a=colors[i],b=colors[i+1],t=(u-a[0])/(b[0]-a[0]);return [1,2,3].map(k=>Math.round(a[k]+t*(b[k]-a[k])));}
+  return {FS,RECORD_SECONDS,RECORD_N,WINDOW_SECONDS,N,BASE,OFFSETS,clamp,mod,events,inside,inWindow,cropStart,roll,rollEvents,standardize,makeSignal,buildData,fft,reflectIndex,spectrogram,color};
+})();
+</script>
+<script id="crop-app">
+'use strict';
+(()=>{
+  const M=window.CropMath,$=id=>document.getElementById(id),font='"Noto Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif';
+  const C={ink:'#17263a',muted:'#57687b',blue:'#215fd1',orange:'#c76a13',red:'#bd3449',purple:'#7650a3',gray:'#b2bdca',grid:'#e5eaf0'};
+  const state={mode:'crop',cropOffset:-64,shift:64,vSample:64,extra:false,spec:false};
+  let data=null,spectra=null,signalCache=null,signalKey='',resizeRAF=0,layoutMode=null;
+  const f=(v,n=3)=>Number(v).toFixed(n),sec=n=>n/M.FS,range=(s,e)=>`[${f(sec(s))}, ${f(sec(e))})초`,signed=n=>n===0?'0초':`${n>0?'+':'−'}${Number(Math.abs(sec(n)).toFixed(3))}초`,accent=()=>state.mode==='crop'?C.orange:C.purple;
+  function setup(canvas){const w=Math.max(260,canvas.clientWidth||canvas.parentElement.clientWidth||600),h=canvas.clientHeight||214,dpr=Math.min(window.devicePixelRatio||1,2);if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);}const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);c.font=`12px ${font}`;c.lineWidth=1;c.textBaseline='middle';return {c,w,h};}
+  function region(w,h,{top=28,bottom=43,left=48,right=16}={}){return {x:left,y:top,w:Math.max(1,w-left-right),h:Math.max(1,h-top-bottom)};}
+  function text(c,s,x,y,{color=C.muted,size=11,align='left'}={}){c.fillStyle=color;c.font=`${size}px ${font}`;c.textAlign=align;c.fillText(s,x,y);}
+  function line(c,x1,y1,x2,y2,color,width=1,dash=[]){c.save();c.strokeStyle=color;c.lineWidth=width;c.setLineDash(dash);c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();c.restore();}
+  function clip(c,r,fn){c.save();c.beginPath();c.rect(r.x,r.y,r.w,r.h);c.clip();fn();c.restore();}
+  function axes(c,r,x0,x1,y0,y1,xticks,yticks,xLabel,yLabel){const X=t=>r.x+(t-x0)/(x1-x0)*r.w,Y=v=>r.y+r.h-(v-y0)/(y1-y0)*r.h;for(const v of yticks){line(c,r.x,Y(v),r.x+r.w,Y(v),C.grid);text(c,String(v),r.x-8,Y(v),{align:'right'});}for(const t of xticks){line(c,X(t),r.y,X(t),r.y+r.h,C.grid);text(c,String(t),X(t),r.y+r.h+15,{align:'center'});}line(c,r.x,r.y+r.h,r.x+r.w,r.y+r.h,'#acbacb');if(yLabel)text(c,yLabel,r.x,r.y-12);if(xLabel)text(c,xLabel,r.x+r.w,r.y+r.h+29,{align:'right'});return {X,Y};}
+  function path(c,arr,X,Y,color,width=1.3){c.save();c.strokeStyle=color;c.lineWidth=width;c.beginPath();for(let i=0;i<arr.length;i++){if(i===0)c.moveTo(X(i),Y(arr[i]));else c.lineTo(X(i),Y(arr[i]));}c.stroke();c.restore();}
+  function circle(c,x,y,color,filled){c.beginPath();c.arc(x,y,4,0,Math.PI*2);c.fillStyle=filled?color:'#fff';c.fill();c.strokeStyle=color;c.lineWidth=1.7;c.stroke();}
+  function triangle(c,x,y,color){c.fillStyle=color;c.beginPath();c.moveTo(x-4.5,y-6);c.lineTo(x+4.5,y-6);c.lineTo(x,y+1);c.closePath();c.fill();}
+  function marks(c,r,vs,X,coordinate='sample',from=-Infinity,to=Infinity,{withLabels=true,color=C.red}={}){vs.forEach((v,i)=>{const t=sec(v[coordinate]);if(t<from||t>to)return;const x=X(t);line(c,x,r.y,x,r.y+r.h,color,.9,[3,3]);triangle(c,x,r.y+1,color);if(withLabels)text(c,v.id,M.clamp(x+7,r.x+3,r.x+r.w-20),r.y+11+(i%2)*12,{color,size:11});});}
+  function windowBar(c,r,X,start,end,y,color,label){const x0=X(sec(start)),x1=X(sec(end));c.save();c.fillStyle=color===C.blue?'#eaf1ff':color===C.orange?'#fff0da':'#f0eafa';c.fillRect(x0,y-5,x1-x0,10);line(c,x0,y,x1,y,color,2);circle(c,x0,y,color,true);circle(c,x1,y,color,false);text(c,label,6,y,{color,size:11});text(c,`${f(sec(start),1)}초`,M.clamp(x0,r.x+12,r.x+r.w-15),y-13,{color,size:10,align:'center'});text(c,`${f(sec(end),1)}초`,M.clamp(x1,r.x+12,r.x+r.w-16),y-13,{color,size:10,align:'center'});c.restore();}
+  function drawContext(){
+    const canvas=$('context-chart'),{c,w,h}=setup(canvas),r=region(w,h,{top:91,bottom:43,left:48,right:18});
+    const {X,Y}=axes(c,r,0,32,-1.35,1.35,w<500?[0,8,16,24,32]:[0,4,8,12,16,20,24,28,32],[-1,0,1],'기록 시각 (초)','진폭 (a.u.)');
+    windowBar(c,r,X,data.original.start,data.original.end,28,C.blue,'원래');windowBar(c,r,X,data.current.start,data.current.end,60,accent(),state.mode==='crop'?'crop':'출처');
+    clip(c,r,()=>{c.fillStyle=state.mode==='crop'?'#fff6e8':'#f5f1fa';c.fillRect(X(sec(data.current.start)),r.y,X(sec(data.current.end))-X(sec(data.current.start)),r.h);path(c,data.signal,i=>X(i/M.FS),Y,C.blue,1.05);line(c,X(sec(data.original.start)),r.y,X(sec(data.original.start)),r.y+r.h,C.blue,1,[4,3]);line(c,X(sec(data.original.end)),r.y,X(sec(data.original.end)),r.y+r.h,C.blue,1,[4,3]);if(state.mode==='crop'){line(c,X(sec(data.current.start)),r.y,X(sec(data.current.start)),r.y+r.h,C.orange,1.6);line(c,X(sec(data.current.end)),r.y,X(sec(data.current.end)),r.y+r.h,C.orange,1.6);}marks(c,r,data.events,X,'sample',0,32);});
+    canvas._region=r;canvas._timeRange=[0,32];
+  }
+  function drawCropEdge(canvas,side){
+    const {c,w,h}=setup(canvas),r=region(w,h,{top:64,bottom:43}),a=side?29:0,b=side?32:3,oldBoundary=side?data.original.end:data.original.start,newBoundary=side?data.current.end:data.current.start;
+    text(c,`원래 ${side?'끝':'시작'} ${f(sec(oldBoundary))}초`,r.x,15,{color:C.blue,size:12});text(c,`새 ${side?'끝':'시작'} ${f(sec(newBoundary))}초 · ${side?'끝 제외':'시작 포함'}`,r.x,36,{color:C.orange,size:12});
+    const {X,Y}=axes(c,r,a,b,-1.35,1.35,w<500?[a,a+1,a+2,b]:[a,a+.5,a+1,a+1.5,a+2,a+2.5,b],[-1,0,1],'기록 시각 (초)','진폭 (a.u.)');
+    clip(c,r,()=>{c.fillStyle='#eaf1ff';const o0=Math.max(a,sec(data.original.start)),o1=Math.min(b,sec(data.original.end));if(o1>o0)c.fillRect(X(o0),r.y,X(o1)-X(o0),r.h);c.fillStyle='#fff0da';const n0=Math.max(a,sec(data.current.start)),n1=Math.min(b,sec(data.current.end));if(n1>n0)c.fillRect(X(n0),r.y,X(n1)-X(n0),r.h);const first=Math.round(a*M.FS),last=Math.min(M.RECORD_N,Math.round(b*M.FS)+1);path(c,data.signal.subarray(first,last),i=>X((first+i)/M.FS),Y,C.blue,1.35);line(c,X(sec(oldBoundary)),r.y,X(sec(oldBoundary)),r.y+r.h,C.blue,3,[4,3]);line(c,X(sec(newBoundary)),r.y,X(sec(newBoundary)),r.y+r.h,C.orange,1.6);marks(c,r,data.events,X,'sample',a,b);});
+    circle(c,X(sec(newBoundary)),r.y+r.h-3,C.orange,!side);
+  }
+  function limit(){let hi=5;for(const v of data.original.input)hi=Math.max(hi,Math.abs(v));for(const v of data.current.input)hi=Math.max(hi,Math.abs(v));return Math.ceil(hi);}
+  function drawShiftEdge(canvas,side){
+    const {c,w,h}=setup(canvas),r=region(w,h,{top:40,bottom:43}),a=side?28:0,b=side?30:2,L=limit();const {X,Y}=axes(c,r,a,b,-L,L,[a,a+.5,a+1,a+1.5,b],[-L,0,L],'이동 후 입력 안의 시간 (초)', 'z-score');
+    const first=Math.round(a*M.FS),last=Math.min(M.N,Math.round(b*M.FS)+1),seam=data.current.seam;
+    clip(c,r,()=>{if(seam!==null){c.fillStyle='#f1eafa';if(state.shift>0)c.fillRect(X(0),r.y,X(sec(seam))-X(0),r.h);else c.fillRect(X(sec(seam)),r.y,X(30)-X(sec(seam)),r.h);}path(c,data.original.input.subarray(first,last),i=>X((first+i)/M.FS),Y,C.gray,1.1);path(c,data.current.input.subarray(first,last),i=>X((first+i)/M.FS),Y,C.purple,1.45);marks(c,r,data.current.events,X,'local',a,b);if(seam!==null)line(c,X(sec(seam)),r.y,X(sec(seam)),r.y+r.h,C.purple,2,[5,3]);});
+    if(seam!==null&&sec(seam)>=a&&sec(seam)<=b)text(c,`접합부 ${f(sec(seam))}초`,r.x+r.w,15,{color:C.purple,size:11,align:'right'});
+  }
+  function drawEdges(){if(state.mode==='crop'){drawCropEdge($('left-edge'),0);drawCropEdge($('right-edge'),1);}else{drawShiftEdge($('left-edge'),0);drawShiftEdge($('right-edge'),1);}}
+  function drawInput(){
+    const canvas=$('input-chart'),{c,w,h}=setup(canvas),L=limit(),left=48,right=16,top=34,gap=43,bottom=43,rowH=(h-top-gap-bottom)/2;
+    const r1={x:left,y:top,w:w-left-right,h:rowH},r2={x:left,y:top+rowH+gap,w:w-left-right,h:rowH},xticks=w<500?[0,10,20,30]:[0,5,10,15,20,25,30];
+    const a1=axes(c,r1,0,30,-L,L,xticks,[-L,0,L],'','원래 입력 · z-score'),a2=axes(c,r2,0,30,-L,L,xticks,[-L,0,L],'각 입력 안의 상대시각 (초)',`${state.mode==='crop'?'새 crop':'원형 shift'} · z-score`);
+    clip(c,r1,()=>{path(c,data.original.input,i=>a1.X(i/M.FS),a1.Y,C.blue,1.0);marks(c,r1,data.original.events,a1.X,'local',0,30);});
+    clip(c,r2,()=>{if(state.mode==='crop'){const d=data.current.actualOffset;if(d<0){c.fillStyle='#ffe9c7';c.fillRect(a2.X(0),r2.y,a2.X(sec(-d))-a2.X(0),r2.h);}else if(d>0){c.fillStyle='#ffe9c7';c.fillRect(a2.X(30-sec(d)),r2.y,a2.X(30)-a2.X(30-sec(d)),r2.h);}}else if(data.current.seam!==null){c.fillStyle='#eaddf8';const s=sec(data.current.seam);if(state.shift>0)c.fillRect(a2.X(0),r2.y,a2.X(s)-a2.X(0),r2.h);else c.fillRect(a2.X(s),r2.y,a2.X(30)-a2.X(s),r2.h);}path(c,data.current.input,i=>a2.X(i/M.FS),a2.Y,accent(),1.0);marks(c,r2,data.current.events,a2.X,'local',0,30);if(state.mode==='shift'&&data.current.seam!==null)line(c,a2.X(sec(data.current.seam)),r2.y,a2.X(sec(data.current.seam)),r2.y+r2.h,C.purple,2,[5,3]);});
+    text(c,`y=${data.original.label}`,r1.x+r1.w,r1.y-12,{color:C.blue,align:'right',size:12});text(c,`y=${data.current.label}`,r2.x+r2.w,r2.y-12,{color:accent(),align:'right',size:12});canvas._region=r2;
+  }
+  function heatImage(spec){if(spec.image)return spec.image;const cv=document.createElement('canvas');cv.width=spec.frames;cv.height=spec.bins;const c=cv.getContext('2d'),im=c.createImageData(cv.width,cv.height);for(let m=0;m<spec.frames;m++)for(let k=0;k<spec.bins;k++){const rgb=M.color(spec.normalized[m*spec.bins+k]),i=((spec.bins-1-k)*spec.frames+m)*4;im.data[i]=rgb[0];im.data[i+1]=rgb[1];im.data[i+2]=rgb[2];im.data[i+3]=255;}c.putImageData(im,0,0);spec.image=cv;return cv;}
+  function drawSpectrum(canvas,spec,ev,seam=null){
+    const {c,w,h}=setup(canvas),r=region(w,h,{top:28,bottom:43}),X=t=>r.x+t/30*r.w,Y=freq=>r.y+r.h-(freq-.5)/39.5*r.h;c.fillStyle='#edf0f4';c.fillRect(r.x,r.y,r.w,r.h);
+    clip(c,r,()=>{c.imageSmoothingEnabled=false;c.drawImage(heatImage(spec),X(-.25),Y(40.25),X(30.25)-X(-.25),Y(.25)-Y(40.25));for(const v of ev){const x=X(sec(v.local));line(c,x,r.y,x,r.y+r.h,'#fff',1,[3,3]);}if(seam!==null)line(c,X(sec(seam)),r.y,X(sec(seam)),r.y+r.h,'#f5b2fb',2,[4,3]);});
+    for(const v of [.5,10,20,30,40])text(c,String(v),r.x-8,Y(v),{align:'right'});for(const t of(w<500?[0,10,20,30]:[0,5,10,15,20,25,30]))text(c,String(t),X(t),r.y+r.h+15,{align:'center'});text(c,'주파수 (Hz)',r.x,r.y-12);text(c,'입력 안의 상대시각 (초)',r.x+r.w,r.y+r.h+29,{align:'right'});ev.forEach(v=>triangle(c,X(sec(v.local)),r.y-1,C.red));
+  }
+  function drawSpectra(){if(!state.spec)return;if(!spectra)spectra={original:M.spectrogram(data.original.input),current:M.spectrogram(data.current.input)};drawSpectrum($('spectrum-original'),spectra.original,data.original.events);drawSpectrum($('spectrum-current'),spectra.current,data.current.events,data.current.seam);}
+  function badge(id,y){$(id).textContent=y?'V 포함':'V 없음';$(id).classList.toggle('positive',Boolean(y));}
+  function inclusionCell(id,inside){$(id).textContent=inside?'포함':'제외';$(id).className=inside?'included':'excluded';}
+
+  function updateLayout(){
+    if(layoutMode===state.mode)return;
+    const crop=state.mode==='crop';
+    $('primary-stage').appendChild($(crop?'context-section':'input-section'));
+    $('secondary-stage').appendChild($(crop?'input-section':'context-section'));
+    $('secondary-details').open=false;
+    $('secondary-details-summary').textContent=crop?'다른 보기 · 원래 입력과 새 crop의 전체 파형':'다른 보기 · 원래 32초 기록과 입력의 출처';
+    $('input-heading').textContent=crop?'원래 입력과 새 crop 비교':'원래 입력과 원형 이동한 입력';
+    $('edge-heading').textContent=crop?'창의 경계 확대':'원형 이동의 앞·뒤와 접합부 확대';
+    $('workbench').setAttribute('data-mode',state.mode);
+    layoutMode=state.mode;
+  }
+  function updateLiveSummary(){
+    const o=data.original,n=data.current,crop=state.mode==='crop';
+    $('live-transform').textContent=crop?`Crop ${signed(state.cropOffset)}`:`원형 이동 ${signed(state.shift)}`;
+    $('live-count').textContent=`V ${o.count}개 → ${n.count}개`;
+    $('live-label').textContent=`y=${o.label} → ${n.label}${o.label!==n.label?' · 라벨 변경':' · 라벨 유지'}`;
+    $('live-seam').textContent=crop?'':n.seam===null?'접합부 없음':`접합부 ${f(sec(n.seam))}초`;
+    if(crop)$('live-route').textContent=`기록 시각: 원래 ${range(o.start,o.end)} → 새 ${range(n.start,n.end)}`;
+    else{
+      const v=o.events.find(e=>e.id==='V1'),m=n.events.find(e=>e.id==='V1');
+      $('live-route').textContent=v?`출처 ${range(o.start,o.end)} · V1: 기록 ${f(sec(v.sample))}초 → 원래 입력 ${f(sec(v.local))}초 → 이동 후 ${f(sec(m.local))}초`:`출처 ${range(o.start,o.end)} · V1 기록 ${f(sec(state.vSample))}초는 원래 창 밖이므로 이동 후에도 입력에 없습니다.`;
+    }
+    $('quick-label').textContent=crop?'Crop 이동량':'원형 이동량';
+    $('quick-value').textContent=crop?signed(state.cropOffset):signed(state.shift);
+    $('quick-crop-position').hidden=!crop;$('quick-shift-position').hidden=crop;
+    $('quick-crop-position').value=M.OFFSETS.indexOf(state.cropOffset);
+    $('quick-shift-position').value=state.shift;
+    $('quick-crop-position').setAttribute('aria-valuetext',`crop 이동량 ${signed(state.cropOffset)}`);
+    $('quick-shift-position').setAttribute('aria-valuetext',`원형 이동량 ${state.shift}샘플, ${signed(state.shift)}`);
+    $('candidate-details').hidden=!crop;
+  }
+
+  function updateLabels(announce=false){
+    updateLayout();updateLiveSummary();
+    const o=data.original,n=data.current,crop=state.mode==='crop';$('mode-crop').setAttribute('aria-pressed',String(crop));$('mode-shift').setAttribute('aria-pressed',String(!crop));$('crop-controls').hidden=!crop;$('shift-controls').hidden=crop;$('candidate-section').hidden=!crop;
+    $('mode-hint').textContent=crop?'주변 문맥에서 다른 30초를 고르고, 그 구간의 정답을 다시 계산합니다.':'원래 30초의 값들만 재배열합니다. V 포함 라벨은 유지합니다.';
+    $('crop-position').value=M.OFFSETS.indexOf(state.cropOffset);$('crop-value').textContent=signed(state.cropOffset);$('crop-position').setAttribute('aria-valuetext',`crop 이동량 ${signed(state.cropOffset)}`);$('shift-position').value=state.shift;$('shift-value').textContent=signed(state.shift);$('shift-position').setAttribute('aria-valuetext',`원형 이동량 ${state.shift}샘플, ${signed(state.shift)}`);
+    $('v-position').value=state.vSample;$('v-value').textContent=`${f(sec(state.vSample))}초`;$('v-sample').textContent=`샘플 인덱스 ${state.vSample} / 4,095 · 1샘플 = 7.8125 ms`;$('v-position').setAttribute('aria-valuetext',`V1 기록 시각 ${f(sec(state.vSample))}초, 샘플 ${state.vSample}`);$('extra-v').checked=state.extra;
+    for(const b of document.querySelectorAll('[data-offset]'))b.setAttribute('aria-pressed',String(Number(b.dataset.offset)===state.cropOffset));
+    $('original-range').textContent=range(o.start,o.end);$('original-y').textContent=`y = ${o.label}`;badge('original-badge',o.label);$('original-count').textContent=`V 주석 ${o.count}개 · 길이 30초`;
+    $('current-title').textContent=crop?'새 crop':'원형 이동한 입력';$('current-range').textContent=crop?range(n.start,n.end):`같은 30초 안에서 ${signed(state.shift)}`;$('current-y').textContent=`y′ = ${n.label}`;badge('current-badge',n.label);$('current-count').textContent=`V 주석 ${n.count}개 · 길이 30초`;$('current-stat').style.borderColor=accent();
+    if(!crop){$('label-result').textContent='라벨 유지';$('label-reason').textContent=`같은 입력의 V ${o.count}개를 원형으로 옮겼습니다. y′ = y = ${o.label}`;}
+    else if(o.label!==n.label){$('label-result').textContent=`라벨 갱신 필요 · ${o.label} → ${n.label}`;$('label-reason').textContent=`V ${o.count}개 → ${n.count}개. 원래 y=${o.label}을 그대로 쓰면 새 입력과 맞지 않습니다.`;}
+    else{$('label-result').textContent=`다시 계산한 라벨도 ${n.label}`;$('label-reason').textContent=o.count!==n.count?`V ${o.count}개 → ${n.count}개지만 하나 이상 남아 있어 y=1입니다.`:`V ${n.count}개로 포함 여부가 같습니다. 다른 crop 후보도 확인해 보세요.`;}
+    if(crop){$('question-text').textContent=o.label!==n.label?'선택한 주황 창과 원래 파란 창은 같은 길이입니다. 그래도 정답이 달라지는 이유를 찾아보세요.':state.vSample===n.end?'V1이 새 창의 끝에 정확히 있습니다. [시작, 끝) 규칙에서 이 V를 셀까요?':state.extra&&state.vSample===16*M.FS?'V1과 추가 V가 같은 샘플에 놓여 있습니다. 이 시연은 같은 시각의 주석을 하나의 사건으로 셉니다.':state.extra?'V가 두 개일 때, 한 개가 빠지는 것과 마지막 한 개가 빠지는 것은 어떻게 다를까요?':'다섯 crop 후보를 바꿔 보세요. 입력의 길이가 같아도 포함되는 사건이 달라질 수 있습니다.';}
+    else{$('question-text').textContent=o.count?'V가 끝에서 앞으로 돌아와도 같은 사건이 남아 있습니다. 라벨과 접합부를 함께 확인하세요.':'원래 창 밖의 V는 원형 shift를 해도 새로 들어오지 않습니다. 「④ 끝에서 앞으로 돌아오는 V」로도 비교해 보세요.';}
+    $('context-caption').textContent=crop?'파형 영역을 좌우로 드래그하면 다섯 crop 후보 중 하나로 이동합니다. 빨간 V1 표식 근처를 드래그하면 주석 시각을 옮길 수 있습니다.':'위의 두 막대는 같은 원래 구간을 가리킵니다. 원형 이동은 이 구간 안에서만 일어납니다. 빨간 V1 표식은 드래그할 수 있습니다.';
+    $('current-swatch').className='swatch '+(crop?'orange':'purple');$('current-legend').textContent=crop?'새 crop':'원형 이동의 출처(같은 창)';
+    $('edge-axis-note').textContent=crop?'기록 시각 기준 · 시작 포함 / 끝 제외':'이동 후 입력의 상대시각 · 회색: 원래 입력 / 보라: 이동 입력';$('left-title').textContent=crop?'왼쪽 경계 · 기록 0–3초':'이동 후 앞부분 · 상대 0–2초';$('right-title').textContent=crop?'오른쪽 경계 · 기록 29–32초':'이동 후 뒷부분 · 상대 28–30초';
+    $('left-reading').textContent=crop?`새 시작 ${f(sec(n.start))}초에 놓인 V는 포함합니다.`:state.shift>0?`원래 끝 ${f(sec(state.shift))}초가 앞쪽으로 돌아왔습니다. 접합부: ${f(sec(n.seam))}초.`:'원래 입력과 이동한 입력을 같은 상대 시간축으로 비교합니다.';
+    $('right-reading').textContent=crop?`새 끝 ${f(sec(n.end))}초에 놓인 V는 제외합니다.`:state.shift<0?`원래 앞 ${f(sec(-state.shift))}초가 뒤쪽으로 돌아왔습니다. 접합부: ${f(sec(n.seam))}초.`:state.shift===0?'이동량 0: 내부 접합부가 생기지 않습니다.':'이동 후 V의 위치는 아래 표에서 확인할 수 있습니다.';
+    for(let i=1;i<=2;i++){const v=data.events.find(e=>e.id===`V${i}`);$(`event-row-${i}`).hidden=!v;if(!v)continue;const old=o.events.find(e=>e.id===v.id),cur=n.events.find(e=>e.id===v.id);$(`event-time-${i}`).textContent=`${f(sec(v.sample))}초`;inclusionCell(`event-old-${i}`,Boolean(old));inclusionCell(`event-new-${i}`,Boolean(cur));$(`event-local-${i}`).textContent=cur?`${f(sec(cur.local))}초`:'입력에 없음';}
+    data.candidates.forEach((a,i)=>{const selected=a.offset===state.cropOffset;$(`candidate-row-${i}`).setAttribute('data-current',String(selected));$(`candidate-range-${i}`).textContent=range(a.start,a.end);$(`candidate-answer-${i}`).textContent=`${a.count}개 / y=${a.label}${a.label!==o.label?' · 변경':''}`;$(`candidate-${i}`).setAttribute('aria-pressed',String(selected));$(`candidate-${i}`).textContent=selected?'선택됨':'선택';});
+    const changed=data.candidates.filter(a=>a.label!==o.label).length;$('candidate-summary').textContent=`원래 라벨과 다른 후보: ${changed} / 5개`;
+    $('input-description').textContent=crop?`새 crop ${range(n.start,n.end)}를 구간별로 다시 표준화했습니다. 옅은 주황 부분은 원래 창 밖에서 새로 가져온 구간입니다. 두 입력의 V 주석과 y를 함께 비교하세요.`:state.shift===0?'이동량이 0이므로 원래 입력과 같습니다.':`원래 표준화된 3,840개 값을 ${state.shift>0?'오른쪽':'왼쪽'}으로 ${Math.abs(state.shift)}샘플 이동했습니다. 보라색 음영은 반대편에서 돌아온 부분, 점선은 인위적 접합부입니다. 라벨이 같다는 것이 모델의 예측도 같다는 뜻은 아닙니다.`;
+    $('spectrum-section').hidden=!state.spec;$('spectrum-toggle').setAttribute('aria-expanded',String(state.spec));$('spectrum-toggle').textContent=state.spec?'STFT 비교 닫기':'STFT도 함께 비교';$('spectrum-current-title').textContent=crop?'새 crop의 STFT':'원형 이동한 1D 파형의 STFT';$('spectrum-note').textContent=crop?'두 파형에서 각각 STFT를 계산했습니다. 빨간 표식은 각 입력 안에 포함된 V의 위치입니다.':'이동한 1D 파형에서 STFT를 다시 계산한 설명용 그림입니다. 노트북의 2D shift는 STFT 평면 자체를 시간축으로 이동하므로 이 그림과 같은 연산이 아닙니다.';
+    $('ref-label').textContent=`현재 원래 V ${o.count}개 → y=${o.label}, 새 입력 V ${n.count}개 → y′=${n.label}`;$('ref-range').textContent=crop?`새 구간: sample ${n.start} ≤ v < ${n.end}`:`원래 포함 주석: sample ${o.start} ≤ v < ${o.end}`;$('ref-roll').textContent=`설정된 k = ${state.shift}샘플 (${signed(state.shift)}), N = 3,840`;$('ref-seam').textContent=state.mode!=='shift'?'원형 shift 모드에서 표시합니다.':n.seam===null?'현재 이동량 0: 내부 접합부 없음':`현재 새 입력 안의 ${f(sec(n.seam))}초`;
+    if(announce)$('status').textContent=`${crop?'시간 crop':'원형 shift'}: 원래 V ${o.count}개, y=${o.label}. 새 입력 V ${n.count}개, y=${n.label}.`;
+  }
+  function drawAll(){if(state.mode==='crop'||$('secondary-details').open)drawContext();drawEdges();if(state.mode==='shift'||$('secondary-details').open)drawInput();drawSpectra();}
+  function rebuild(announce=false){const key=`${state.vSample}:${state.extra}`;if(key!==signalKey||!signalCache){signalCache=M.makeSignal(M.events(state.vSample,state.extra));signalKey=key;}data=M.buildData(state,signalCache);spectra=null;updateLabels(announce);drawAll();}
+  function setCropOffset(offset,announce=true){state.cropOffset=M.OFFSETS.reduce((best,v)=>Math.abs(v-offset)<Math.abs(best-offset)?v:best,M.OFFSETS[0]);rebuild(announce);}
+  function setV(sample,announce=true){state.vSample=M.clamp(Math.round(sample),0,M.RECORD_N-1);rebuild(announce);}
+  function setMode(mode){state.mode=mode;rebuild(true);}
+  function setScene(name){Object.assign(state,{mode:'crop',extra:false,cropOffset:-64,shift:64});if(name==='enter')state.vSample=64;else if(name==='exit'){state.vSample=192;state.cropOffset=128;}else if(name==='boundary'){state.vSample=M.BASE+M.N;state.cropOffset=0;}else if(name==='roll'){state.mode='shift';state.vSample=Math.round(30.75*M.FS);state.shift=64;}rebuild(true);}
+  function bindContext(){const canvas=$('context-chart');let drag=null;canvas.addEventListener('pointerdown',e=>{if(e.button!==0)return;const rect=canvas.getBoundingClientRect(),r=canvas._region,x=e.clientX-rect.left,y=e.clientY-rect.top,vx=r.x+sec(state.vSample)/32*r.w,hitV=Math.abs(x-vx)<14&&y>=r.y-10&&y<r.y+32;if(hitV)drag={kind:'v'};else if(state.mode==='crop')drag={kind:'crop',x:e.clientX,offset:state.cropOffset};else return;canvas.setPointerCapture(e.pointerId);});canvas.addEventListener('pointermove',e=>{if(!drag)return;const r=canvas._region,rect=canvas.getBoundingClientRect();if(drag.kind==='v')setV((e.clientX-rect.left-r.x)/r.w*32*M.FS,false);else setCropOffset(drag.offset+(e.clientX-drag.x)/r.w*32*M.FS,false);});canvas.addEventListener('pointerup',()=>{if(drag)updateLabels(true);drag=null;});canvas.addEventListener('pointercancel',()=>{drag=null;});canvas.addEventListener('lostpointercapture',()=>{drag=null;});}
+  $('mode-crop').addEventListener('click',()=>setMode('crop'));$('mode-shift').addEventListener('click',()=>setMode('shift'));
+  for(const b of document.querySelectorAll('[data-offset]'))b.addEventListener('click',()=>setCropOffset(Number(b.dataset.offset)));
+  for(const b of document.querySelectorAll('[data-candidate]'))b.addEventListener('click',()=>setCropOffset(M.OFFSETS[Number(b.dataset.candidate)]));
+  $('crop-position').addEventListener('input',()=>setCropOffset(M.OFFSETS[Number($('crop-position').value)],false));$('crop-position').addEventListener('change',()=>updateLabels(true));
+  $('shift-position').addEventListener('input',()=>{state.shift=Number($('shift-position').value);rebuild();});$('shift-position').addEventListener('change',()=>updateLabels(true));
+  for(const [id,value] of [['shift-left',-64],['shift-zero',0],['shift-right',64]])$(id).addEventListener('click',()=>{state.shift=value;rebuild(true);});
+  $('v-position').addEventListener('input',()=>setV(Number($('v-position').value),false));$('v-position').addEventListener('change',()=>updateLabels(true));
+  for(const [id,value] of [['v-at-start',M.BASE],['v-before-end',M.BASE+M.N-1],['v-at-end',M.BASE+M.N],['v-after-end',M.BASE+M.N+1]])$(id).addEventListener('click',()=>setV(value));
+  $('extra-v').addEventListener('change',()=>{state.extra=$('extra-v').checked;rebuild(true);});
+  for(const [id,name] of [['scene-enter','enter'],['scene-exit','exit'],['scene-boundary','boundary'],['scene-roll','roll']])$(id).addEventListener('click',()=>setScene(name));
+  $('spectrum-toggle').addEventListener('click',()=>{state.spec=!state.spec;updateLabels();drawSpectra();});
+  $('reset').addEventListener('click',()=>{Object.assign(state,{mode:'crop',cropOffset:-64,shift:64,vSample:64,extra:false,spec:false});rebuild(true);});
+
+  $('quick-crop-position').addEventListener('input',()=>setCropOffset(M.OFFSETS[Number($('quick-crop-position').value)],false));
+  $('quick-crop-position').addEventListener('change',()=>updateLabels(true));
+  $('quick-shift-position').addEventListener('input',()=>{state.shift=Number($('quick-shift-position').value);rebuild();});
+  $('quick-shift-position').addEventListener('change',()=>updateLabels(true));
+  $('secondary-details').addEventListener('toggle',()=>{if($('secondary-details').open)requestAnimationFrame(drawAll);});
+  $('v-options').addEventListener('toggle',()=>requestAnimationFrame(drawAll));
+
+  bindContext();window.addEventListener('resize',()=>{cancelAnimationFrame(resizeRAF);resizeRAF=requestAnimationFrame(drawAll);});
+  window.__CROP_TEST__={math:M,state,rebuild,render:drawAll,drawAll,setScene,setMode,setV,setCropOffset,drawContext,drawEdges,drawInput,drawSpectrum,getData:()=>data,getSpectra:()=>spectra};
+  try{rebuild();}catch(err){$('error').hidden=false;$('error').textContent='그림을 초기화하지 못했습니다. 파일을 일반 브라우저에서 다시 열어 주세요. '+err.message;throw err;}
+})();
+</script>
+</body>
+</html>
