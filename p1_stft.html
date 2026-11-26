@@ -13,10 +13,14 @@
 @media(max-width:640px){main{padding:18px 14px 35px}h1{letter-spacing:-.7px}.intro{font-size:14px}.control-grid{gap:11px 10px}.segmented{flex-wrap:wrap}.segmented button{min-width:42%;min-height:38px}.position-row{grid-template-columns:1fr auto;gap:5px 10px}.position-row input{grid-column:1/-1;grid-row:2}.position-value{font-size:13px}.play-controls{gap:4px}.play-controls button{padding:5px 10px;min-height:40px}.stats{grid-template-columns:1fr 1fr;gap:10px}.stat .value{font-size:17px}.question-strip{display:block;font-size:13px}.question-strip strong{display:block;margin-bottom:2px}.detail-grid,.compare-grid{grid-template-columns:1fr;gap:9px}.plot-meta{font-size:11px}.plot-section{margin-top:13px}.detail-chart{height:206px}.heat-chart{height:226px}.reference table{font-size:13px;table-layout:auto}.reference th,.reference td{padding:9px 6px}.reference th:first-child{width:24%}.reference th:nth-child(2){width:32%}.formula{font-size:15px}.scene-row button{font-size:13px;flex-grow:1}.field-label{font-size:12px}.field select{font-size:14px;padding-right:18px}.heat-legend .bar{width:74px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 @media print{main{max-width:none;padding:0}.controls,.scene-row,.heat-actions,.play-controls{display:none}.question-grid{grid-template-columns:1fr}.reference,.lesson{break-before:auto}canvas{break-inside:avoid}.plot-section{break-inside:avoid}details:not([open])>*:not(summary){display:block}button{display:none}}
+.course-home-link{display:inline-flex;align-items:center;gap:.4em;box-sizing:border-box;min-height:2.5rem;margin-bottom:12px;padding:.25rem .75rem;border:1px solid var(--line,#dce3eb);border-radius:8px;background:var(--paper,#fff);color:var(--blue,var(--accent,#215fd1));font:600 .875rem/1.4 system-ui,sans-serif;text-decoration:none}
+.course-home-link:hover{text-decoration:underline;text-underline-offset:.15em}
+.course-home-link:focus-visible{outline:2px solid currentColor;outline-offset:2px}
 </style>
 </head>
 <body>
 <main>
+  <a class="course-home-link" href="./index.html#interactive"><span aria-hidden="true">←</span> 강의 홈으로 돌아가기</a>
   <header class="header">
     <div><div class="eyebrow">BIO SIGNAL LAB / INTERACTIVE 01</div><h1>STFT, 창을 움직여 이해하기</h1><p class="intro">짧은 구간을 잘라 주파수를 구하고, 그 결과를 시간 순서로 쌓아 봅니다.<br>창의 <strong>길이</strong>와 <strong>위치</strong>를 바꾸면서 네 그림의 연결을 확인하세요.</p></div>
     <span class="source-badge">설명용 합성 신호 · 오프라인 실행</span>

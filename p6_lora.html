@@ -15,10 +15,14 @@
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 @media print{body{background:#fff}main{max-width:none;padding:0}.tabs,.sidebar,.quick,.next-row{display:none}.workbench{display:block}.panel,.aux{break-inside:avoid}}
 
+.course-home-link{display:inline-flex;align-items:center;gap:.4em;box-sizing:border-box;min-height:2.5rem;margin-bottom:12px;padding:.25rem .75rem;border:1px solid var(--line,#dce3eb);border-radius:8px;background:var(--paper,#fff);color:var(--blue,var(--accent,#215fd1));font:600 .875rem/1.4 system-ui,sans-serif;text-decoration:none}
+.course-home-link:hover{text-decoration:underline;text-underline-offset:.15em}
+.course-home-link:focus-visible{outline:2px solid currentColor;outline-offset:2px}
 </style>
 </head>
 <body>
 <main>
+<a class="course-home-link" href="./index.html#interactive"><span aria-hidden="true">←</span> 강의 홈으로 돌아가기</a>
 <header><div><div class="eyebrow">BIOSIGNAL CLASSROOM · 05</div><h1>LoRA · 작은 행렬로 더하는 변화</h1><p class="intro">고정된 W₀에 학습 가능한 A·B 경로를 더합니다. r은 중간 차원, α/r는 추가 출력의 배율입니다.</p></div><div class="header-note">LoRA = Low-Rank Adaptation<br>실습 04 · ST-MEM Q·V LoRA</div></header>
 <nav class="tabs" role="tablist" aria-label="학습 단계"><button type="button" id="tab-toy" class="tab" role="tab" aria-controls="panel-toy" aria-selected="true" tabindex="0">① r·α와 출력 변화</button><button type="button" id="tab-config" class="tab" role="tab" aria-controls="panel-config" aria-selected="false" tabindex="-1">② 실습 적용 위치·개수</button></nav>
 

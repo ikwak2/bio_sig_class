@@ -14,10 +14,14 @@
 @media(min-width:851px) and (max-height:650px){.sidebar{position:static}.quick-control{display:block}.quick-control{top:0}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 @media print{body{background:#fff}main{max-width:none;padding:0}.tabs,.sidebar,.quick-control,.next-row,.reset{display:none}.workbench{display:block}.panel{break-inside:avoid}.aux{break-inside:avoid}.foot{font-size:10px}}
+.course-home-link{display:inline-flex;align-items:center;gap:.4em;box-sizing:border-box;min-height:2.5rem;margin-bottom:12px;padding:.25rem .75rem;border:1px solid var(--line,#dce3eb);border-radius:8px;background:var(--paper,#fff);color:var(--blue,var(--accent,#215fd1));font:600 .875rem/1.4 system-ui,sans-serif;text-decoration:none}
+.course-home-link:hover{text-decoration:underline;text-underline-offset:.15em}
+.course-home-link:focus-visible{outline:2px solid currentColor;outline-offset:2px}
 </style>
 </head>
 <body>
 <main>
+<a class="course-home-link" href="./index.html#interactive"><span aria-hidden="true">←</span> 강의 홈으로 돌아가기</a>
 <header><div><div class="eyebrow">BIOSIGNAL CLASSROOM · 04</div><h1>30초를 나누고, 특징을 모으기</h1><p class="intro">ST-MEM의 9초 crop · 0.3초 patch · mean/max pooling을 직접 움직여 봅니다.</p></div><div class="header-note">실습 04와 연결<br>1채널 MLII · 250 Hz · ST-MEM base</div></header>
 <nav class="tabs" role="tablist" aria-label="학습 단계"><button type="button" id="tab-patch" class="tab" role="tab" aria-selected="true" aria-controls="panel-patch" tabindex="0">① Crop과 패치</button><button type="button" id="tab-pool" class="tab" role="tab" aria-selected="false" aria-controls="panel-pool" tabindex="-1">② Mean · Max pooling</button></nav>
 
